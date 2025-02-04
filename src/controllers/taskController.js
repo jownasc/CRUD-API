@@ -13,6 +13,13 @@ exports.getAllTasks = (req, res) => {
 // Pega uma tarefa pelo ID
 exports.getTaskById = (req, res) => {
   const taskId = req.params.id;
+
+  // Validação de ID válido
+  if (isNaN(taskId)) {
+    return res.status(400).json({ error: 'ID inválido. O ID deve ser um número.' });
+  }
+
+  // Chama o modelo para buscar a tarefa
   Task.getById(taskId, (err, task) => {
     if (err || !task) {
       return res.status(404).json({ error: 'Tarefa não encontrada' });
@@ -50,7 +57,12 @@ exports.updateTask = (req, res) => {
   const taskId = req.params.id;
   const { title, completed } = req.body;
 
-  // Validação de tipos de dados
+  // Validação de ID válido
+  if (isNaN(taskId)) {
+    return res.status(400).json({ error: 'ID inválido. O ID deve ser um número.' });
+  }
+
+  // Validação de tipos de dados (se necessário)
   if (completed !== undefined && typeof completed !== 'boolean') {
     return res.status(400).json({ error: 'O campo "completed" deve ser um booleano (true ou false)' });
   }
@@ -71,6 +83,12 @@ exports.updateTask = (req, res) => {
 exports.deleteTask = (req, res) => {
   const taskId = req.params.id;
 
+  // Validação de ID válido
+  if (isNaN(taskId)) {
+    return res.status(400).json({ error: 'ID inválido. O ID deve ser um número.' });
+  }
+
+  // Chama o modelo para deletar a tarefa
   Task.delete(taskId, (err, result) => {
     if (err) {
       return res.status(500).json({ error: 'Erro ao deletar tarefa' });
