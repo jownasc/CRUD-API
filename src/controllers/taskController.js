@@ -21,14 +21,23 @@ exports.getTaskById = (req, res) => {
   });
 };
 
+
 // Cria uma nova tarefa
 exports.createTask = (req, res) => {
   const { title, completed } = req.body;
+
+  // Validação do titulo
   if (!title) {
     return res.status(400).json({ error: 'O título da tarefa é obrigatório' });
   }
 
-  Task.create({ title, completed }, (err, newTask) => {
+  // Validação de tipos de dados
+  if (completed !== undefined && typeof completed !== 'boolean') {
+    return res.status(400).json({ error: 'O campo "completed" deve ser um booleano (true ou false)' });
+  }
+
+  // Cria a tarefa após os requisitos
+  Task.create({ title, completed: completed || false }, (err, newTask) => {
     if (err) {
       return res.status(500).json({ error: 'Erro ao criar tarefa' });
     }
@@ -41,6 +50,12 @@ exports.updateTask = (req, res) => {
   const taskId = req.params.id;
   const { title, completed } = req.body;
 
+  // Validação de tipos de dados
+  if (completed !== undefined && typeof completed !== 'boolean') {
+    return res.status(400).json({ error: 'O campo "completed" deve ser um booleano (true ou false)' });
+  }
+
+  // Chama o modelo para atualizar a tarefa
   Task.update(taskId, { title, completed }, (err, updatedTask) => {
     if (err) {
       return res.status(500).json({ error: 'Erro ao atualizar tarefa' });
